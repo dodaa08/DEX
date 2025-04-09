@@ -1,5 +1,14 @@
 {
+  "scripts": {
+    "build" : "npx tsc",
+    "dev" : "npm run build && nodemon ./dist/index.js",
+     "start": "node ./dist/index.js",
+    "test": "echo \"Add your tests here\""
+  },
   "dependencies": {
     "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/nodemon": "^1.19.6"
   }
 }
