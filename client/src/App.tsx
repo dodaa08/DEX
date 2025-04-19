@@ -1,29 +1,27 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import Landing from "./pages/Landing"
+
+
 const App = ()=>{
+  const routes = [
+    {
+      path : "",
+      element : <Landing />
+    }
+  ]
   return(
     <>
-    <h1> </h1>
+    <BrowserRouter>
+      <Routes>
+        {
+          routes.map((route, index)=>(
+            <Route key={index} path={route.path} element={route.element} />
+          ))
+        }
+      </Routes>
+    </BrowserRouter>
     </>
   )
 }
 
 export default App;
-
-
-
-// UI for the DEX
-
-{/*
-  
-  Frontend (React/Next.js + Ethers.js)
-
-Connect wallet/ Landing Page
-
-Display token balances & reserves
-
-Add/remove liquidity
-
-Swap tokens
-
-Show LP token balance
-
-  */}

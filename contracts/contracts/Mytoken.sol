@@ -9,3 +9,5 @@ contract MyToken is ERC20 {
     }
 }
 
+
+// Stable coins for my DEX to swap testtoken with ... 
