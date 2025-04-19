@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/query'
 import { WagmiProvider } from 'wagmi'
 import { config } from '../config/wagmi'
 

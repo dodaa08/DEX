@@ -5,10 +5,10 @@ import { metaMask } from 'wagmi/connectors'
 export const config = createConfig({
   chains: [mainnet, sepolia],
   connectors: [
-    metaMask(), // only MetaMask for now
+    metaMask(), // MetaMask only
   ],
   transports: {
     [mainnet.id]: http(),
     [sepolia.id]: http(),
   },
-});
+})

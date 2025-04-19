@@ -1,129 +1,132 @@
-import { useState } from 'react';
-import { TokenSelect } from './TokenSelect';
-import { Token } from '../../services/token';
-import { ArrowDownUp } from 'lucide-react';
+import { useState } from "react";
+import { ArrowDown, ArrowUpDown, Settings } from "lucide-react";
+import { Button } from "../ui/button";
+import { useWallet } from "../../hooks/useWallet";
+import  ethers from "ethers";
+
 
 const SwapCard = () => {
-  const [sellToken, setSellToken] = useState<Token>();
-  const [buyToken, setBuyToken] = useState<Token>();
-  const [isRotating, setIsRotating] = useState(false);
+  const { isConnected } = useWallet();
+  const [fromAmount, setFromAmount] = useState("");
+  const [toAmount, setToAmount] = useState("");
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  const handleSwapClick = () => {
-    setIsRotating(true);
-    const tempToken = sellToken;
-    setSellToken(buyToken);
-    setBuyToken(tempToken);
-    setTimeout(() => setIsRotating(false), 500);
+  const handleSwap = () => {
+    // Swap logic will be implemented here
+    console.log("Swapping...");
   };
 
   return (
-    <div className="flex flex-col items-center justify-center text-center">
-      {/* Heading */}
-      <div className="mb-12">
-        <h1 className="text-6xl font-bold">
-          <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-            Trade Smarter,
-          </span>
-          <br />
-          <span className="text-white">Trade Faster.</span>
-        </h1>
-        <p className="text-gray-400 mt-4 text-xl">
-          Experience seamless crypto trading
-        </p>
+    <>
+    <div className="flex flex-col gap-10">
+
+      <div className="flex justify-center">  
+        <h1 className="text-2xl text-gray-500">TradeFlow</h1>
       </div>
 
-      <div className="w-full max-w-[464px] flex flex-col gap-2">
-        {/* Sell Card */}
-        <div className="bg-[#111827] rounded-2xl p-4 border border-blue-900/20">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-400">Sell</span>
-            {sellToken && (
-              <span className="text-gray-400">
-                ≈${(Number(sellToken.price) || 0).toFixed(2)}
-              </span>
-            )}
-          </div>
-          <div className="flex justify-between items-center mt-1">
-            <input 
-              type="number" 
-              placeholder="0" 
-              className="text-4xl bg-transparent outline-none w-full text-white"
-            />
-            <TokenSelect
-              selectedToken={sellToken}
-              onSelect={setSellToken}
-            />
-          </div>
-          {sellToken && (
-            <div className="text-left text-sm text-gray-500 mt-1">
-              24h: <span className={`${(sellToken.priceChange24h ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {sellToken.priceChange24h?.toFixed(2)}%
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Swap Direction Button */}
-        <div className="flex justify-center -my-2 relative z-10">
-          <button
-            onClick={handleSwapClick}
-            className="p-2 rounded-xl bg-blue-500 hover:bg-blue-600 transition-all duration-200 
-                     transform hover:scale-110 shadow-lg hover:shadow-blue-500/25
-                     border border-blue-400/20 group"
+    <div className="w-full max-w-md mx-auto bg-[#1e2b45]/50 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-blue-500/20">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold text-white">Swap</h2>
+        <button
+          onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+          className="p-2 rounded-lg hover:bg-[#2a3b5c] transition-colors"
           >
-            <ArrowDownUp 
-              className={`w-5 h-5 text-white transition-transform duration-500 
-                       ${isRotating ? 'rotate-180' : ''}`}
-            />
+          <Settings className="w-5 h-5 text-blue-400" />
+        </button>
+      </div>
+
+      {/* From Token */}
+      <div className="bg-[#2a3b5c]/50 rounded-xl p-4 mb-4 border border-blue-500/10">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-sm text-gray-400">From</span>
+          <span className="text-sm text-gray-400">Balance: 0.0</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <input
+            type="number"
+            placeholder="0.0"
+            value={fromAmount}
+            onChange={(e) => setFromAmount(e.target.value)}
+            className="bg-transparent text-white text-2xl w-full focus:outline-none"
+          />
+          <button className="flex items-center gap-2 bg-[#1e2b45] px-3 py-2 rounded-lg text-white hover:bg-[#2a3b5c] transition-colors">
+            <img src="/eth.png" alt="ETH" className="w-6 h-6" />
+            <span>ETH</span>
+            <ArrowDown className="w-4 h-4" />
           </button>
         </div>
-
-        {/* Buy Card */}
-        <div className="bg-[#111827] rounded-2xl p-4 border border-blue-900/20">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-400">Buy</span>
-            {buyToken && (
-              <span className="text-gray-400">
-                ≈${(Number(buyToken.price) || 0).toFixed(2)}
-              </span>
-            )}
-          </div>
-          <div className="flex justify-between items-center mt-1">
-            <input 
-              type="number" 
-              placeholder="0" 
-              className="text-4xl bg-transparent outline-none w-full text-white"
-            />
-            <TokenSelect
-              selectedToken={buyToken}
-              onSelect={setBuyToken}
-            />
-          </div>
-          {buyToken && (
-            <div className="text-left text-sm text-gray-500 mt-1">
-              24h: <span className={`${(buyToken.priceChange24h ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {buyToken.priceChange24h?.toFixed(2)}%
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Get Started Button */}
-        <button 
-          className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg font-medium
-                   transition-colors duration-200 rounded-xl"
-        >
-          Get started
-        </button>
-
-        {/* Description Text */}
-        <p className="text-gray-400 mt-6 text-center">
-          The largest onchain marketplace. Buy and sell crypto
-          <br />
-          on Ethereum and 11+ other chains.
-        </p>
       </div>
+
+      {/* Swap Button */}
+      <div className="relative my-2">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <button className="bg-[#1e2b45] p-2 rounded-full border-2 border-[#2a3b5c] hover:bg-[#2a3b5c] transition-colors">
+            <ArrowUpDown className="w-5 h-5 text-blue-400" />
+          </button>
+        </div>
+      </div>
+
+      {/* To Token */}
+      <div className="bg-[#2a3b5c]/50 rounded-xl p-4 mb-6 border border-blue-500/10">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-sm text-gray-400">To</span>
+          <span className="text-sm text-gray-400">Balance: 0.0</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <input
+            type="number"
+            placeholder="0.0"
+            value={toAmount}
+            onChange={(e) => setToAmount(e.target.value)}
+            className="bg-transparent text-white text-2xl w-full focus:outline-none"
+            />
+          <button className="flex items-center gap-2 bg-[#1e2b45] px-3 py-2 rounded-lg text-white hover:bg-[#2a3b5c] transition-colors">
+            <img src="/usdc.png" alt="USDC" className="w-6 h-6" />
+            <span>USDC</span>
+            <ArrowDown className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Swap Button */}
+      <Button
+        onClick={handleSwap}
+        className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl text-lg font-medium
+        transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]
+        disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={!isConnected || !fromAmount || !toAmount}
+        >
+        {isConnected ? "Swap" : "Connect Wallet"}
+      </Button>
+
+      {/* Settings Panel */}
+      {isSettingsOpen && (
+        <div className="mt-4 p-4 bg-[#2a3b5c]/50 rounded-xl border border-blue-500/10">
+          <h3 className="text-white font-medium mb-3">Transaction Settings</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Slippage Tolerance</span>
+              <div className="flex gap-2">
+                <button className="px-3 py-1 bg-[#1e2b45] rounded-lg text-white hover:bg-[#2a3b5c]">0.1%</button>
+                <button className="px-3 py-1 bg-[#1e2b45] rounded-lg text-white hover:bg-[#2a3b5c]">0.5%</button>
+                <button className="px-3 py-1 bg-[#1e2b45] rounded-lg text-white hover:bg-[#2a3b5c]">1%</button>
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Transaction Deadline</span>
+              <input
+                type="number"
+                placeholder="20"
+                className="w-20 bg-[#1e2b45] px-3 py-1 rounded-lg text-white focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+          </div>
+      </>
   );
 };
 

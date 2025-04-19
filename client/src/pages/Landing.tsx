@@ -8,7 +8,7 @@ const Landing = () => {
         <Header />
       </div>
 
-      <div className="w-full max-w-7xl py-8">
+      <div className="py-20">
        <SwapCard />  
       </div>       
 

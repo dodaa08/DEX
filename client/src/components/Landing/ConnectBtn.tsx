@@ -1,60 +1,48 @@
-import {useConnect, useAccount, useDisconnect} from "wagmi";
+import { useAccount, useConnect, useDisconnect } from "wagmi"
 
+const ConnectBtn = () => {
+  const { address } = useAccount()
+  const { connectors, connect } = useConnect()
+  const { disconnect } = useDisconnect()
 
-
-const Connectbtn = ()=>{
-    const { connectors, connect, isLoading, pendingConnector } = useConnect();
-    const {address, isConnected} = useAccount();
-    const {disconnect} = useDisconnect();
-
-
-
-    const metamaskConnector = connectors.find((connector)=> connector.id === "metaMask");
-    
-    return (
-        <>
-         <div>
-            {
-                isConnected  ? (
-                    <>
-                    
-                    <p className="text-white">Connected: {address?.slice(0, 6)}...{address?.slice(-4)}</p>
+  // Filter to show only MetaMask (you can add conditions if needed)
+  const metaMaskConnectors = connectors.filter(
+    (connector) =>
+      connector.id.toLowerCase().includes('meta') ||
+      connector.name.toLowerCase().includes('meta')
+  )
+  
+  return (
+    <div>
+      {address ? (
+         <>
+         <div className="flex flex gap-5 items-start">
           <button
-            className="bg-red-600 hover:bg-red-700 text-white border border-red-500/20 px-6 py-3 text-sm font-medium rounded-xl
-              transition-all duration-200 hover:scale-105 hover:border-red-500/40 hover:shadow-[0_0_20px_rgba(239,68,68,0.15)]
-              focus:ring-2 focus:ring-red-500/20 focus:outline-none cursor-pointer"
+            className="bg-[#1e2b45] hover:bg-[#2a3b5c] text-gray-100 border border-blue-500/20 px-4 py-3 text-l font-medium rounded-xl
+              transition-all duration-200 hover:border-blue-500/40 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]
+              focus:ring-2 focus:ring-blue-500/20 focus:outline-none cursor-pointer disabled:opacity-50"
             onClick={() => disconnect()}
           >
             Disconnect
           </button>
-                    </>
-                ) : (
-                    <>
-                    <button
-          className="bg-[#1e2b45] hover:bg-[#2a3b5c] text-white border border-blue-500/20 px-6 py-5 text-sm font-medium rounded-xl
-            transition-all duration-200 hover:scale-105 hover:border-blue-500/40 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]
-            focus:ring-2 focus:ring-blue-500/20 focus:outline-none cursor-pointer disabled:opacity-50"
-          onClick={() => {
-            if(metamaskConnector){
-                connect({ connector : metamaskConnector})
-            }
-          }}
-          disabled={!metamaskConnector || isLoading}
-        >
-          {isLoading && pendingConnector?.id === 'metaMask'
-            ? 'Connecting...'
-            : 'Connect MetaMask'}
-        </button>
-                    </>
-                )
-            }
-
-         </div>
-        </>
-    )
+          <p className="text-gray-300 mt-3">Connected: <span className="text-white">{address.slice(0, 6)}...{address.slice(-4)}</span></p>
+        </div>
+            </>
+      ) : (
+        metaMaskConnectors.map((connector) => (
+          <button
+            className="bg-[#1e2b45] hover:bg-[#2a3b5c] text-gray-100 border border-blue-500/20 px-4 py-3 text-l font-medium rounded-xl
+              transition-all duration-200 hover:border-blue-500/40 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]
+              focus:ring-2 focus:ring-blue-500/20 focus:outline-none cursor-pointer disabled:opacity-50"
+            key={connector.uid}
+            onClick={() => connect({ connector })}
+          >
+            Connect MetaMask
+          </button>
+        ))
+      )}
+    </div>
+  )
 }
 
-export default Connectbtn;
-
-
-
+export default ConnectBtn
