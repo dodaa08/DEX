@@ -1,19 +1,26 @@
 import { ethers } from "hardhat";
 
+
 async function main() {
   console.log("🚀 Starting deployment to Sepolia...");
+  const [deployer] = await ethers.getSigners();
+  const userAddress = deployer.address;
 
   try {
     // Deploy Token A
     const MyToken = await ethers.getContractFactory("LPToken");
     const tokenA = await MyToken.deploy();
     await tokenA.waitForDeployment();
+    await tokenA.mint(userAddress, ethers.parseUnits("1000", 18));
+    console.log("💰 Minted 1000 TokenA"); 
     console.log(`✅ TokenA deployed at: ${tokenA.target}`);
 
     // Deploy Token B
     const tokenB = await MyToken.deploy();
     await tokenB.waitForDeployment();
     console.log(`✅ TokenB deployed at: ${tokenB.target}`);
+    await tokenB.mint(userAddress, ethers.parseUnits("1000", 18));
+    console.log("💰 Minted 1000 TokenB");
 
     // Deploy Factory
     const Factory = await ethers.getContractFactory("Factory");

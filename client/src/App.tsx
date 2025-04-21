@@ -1,27 +1,20 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Landing from "./pages/Landing"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { PageTransition } from "./components/Layout/PageTransition";
+import Landing from "./pages/Landing";
+import Mint from "./pages/Mint";
+import Header from "./components/Landing/Header";
 
-
-const App = ()=>{
-  const routes = [
-    {
-      path : "",
-      element : <Landing />
-    }
-  ]
-  return(
-    <>
-    <BrowserRouter>
-      <Routes>
-        {
-          routes.map((route, index)=>(
-            <Route key={index} path={route.path} element={route.element} />
-          ))
-        }
-      </Routes>
-    </BrowserRouter>
-    </>
-  )
+function App() {
+  return (
+    <Router>
+      <PageTransition>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/mint" element={<Mint />} />
+        </Routes>
+      </PageTransition>
+    </Router>
+  );
 }
 
 export default App;
