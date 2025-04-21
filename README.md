@@ -1,4 +1,4 @@
-# 🦄 ETH-DEX: Decentralized Exchange on Ethereum (PERN + Hardhat)
+# 🦄 Decentralized Exchange on Ethereum 
 
 This is a full-stack **Decentralized Exchange (DEX)** built using the **PERN stack** (PostgreSQL, Express, React, Node.js) and **Solidity** on Ethereum using **Hardhat**. It enables users to connect their wallet, provide liquidity, and swap tokens on-chain using smart contracts.
 
