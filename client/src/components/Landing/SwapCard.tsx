@@ -3,7 +3,6 @@ import { ArrowDown, ArrowUpDown, Settings } from "lucide-react";
 import { Button } from "../ui/button";
 import { useAccount } from "wagmi";
 import { useSwap } from "../../hooks/useSwap";
-import { ethers } from "ethers";
 import { motion } from "framer-motion";
 
 const SwapCard = () => {

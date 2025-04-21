@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { PageTransition } from "./components/Layout/PageTransition";
 import Landing from "./pages/Landing";
 import Mint from "./pages/Mint";
-import Header from "./components/Landing/Header";
 
 function App() {
   return (
