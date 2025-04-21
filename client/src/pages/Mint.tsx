@@ -46,7 +46,7 @@ export default function MintToken() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
-      className="min-h-max bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center p-4"
+      className="min-h-max bg-black from-gray-900 to-gray-800 flex items-center justify-center p-4"
     >
       <motion.div 
         initial={{ scale: 0.95, opacity: 0 }}
