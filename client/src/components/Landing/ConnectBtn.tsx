@@ -29,17 +29,16 @@ const ConnectBtn = () => {
         </div>
             </>
       ) : (
-        metaMaskConnectors.map((connector) => (
+        metaMaskConnectors.length > 0 && (
           <button
             className="bg-[#1e2b45] hover:bg-[#2a3b5c] text-gray-100 border border-blue-500/20 px-4 py-3 text-l font-medium rounded-xl
               transition-all duration-200 hover:border-blue-500/40 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]
               focus:ring-2 focus:ring-blue-500/20 focus:outline-none cursor-pointer disabled:opacity-50"
-            key={connector.uid}
-            onClick={() => connect({ connector })}
+            onClick={() => connect({ connector: metaMaskConnectors[0] })}
           >
             Connect MetaMask
           </button>
-        ))
+        )
       )}
     </div>
   )

@@ -1,68 +1,55 @@
 import { useState } from "react";
-import { useAccount, usePublicClient, useWalletClient } from "wagmi";
-import { getContracts, getAmountOut } from "../lib/contracts";
+import { useAccount, useWalletClient } from "wagmi";
+import { getContracts } from "../lib/contracts";
 import { ethers } from "ethers";
 
-export function useSwap() {
-  const { address, isConnected } = useAccount();
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
+export const useSwap = () => {
+  const { data: walletClient } = useWalletClient(); 
+  const { address } = useAccount();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const swap = async (fromToken: string, toToken: string, amount: string) => {
-    if (!isConnected || !address || !walletClient) {
-      setError("Please connect your wallet");
+  async function ensureWalletConnected() {
+    if (!window.ethereum) throw new Error("No crypto wallet found");
+  
+    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+    if (!accounts || accounts.length === 0) {
+      throw new Error("No accounts found");
+    }
+    return accounts[0]; // returns the first account
+  }
+  
+
+  const swap = async (amountIn: string, amountOut: string, address: string) => {
+    if (!walletClient || !address) {
+      setError("Wallet not connected");
       return;
     }
-
+  
+    setLoading(true);
+    setError(null);
+  
     try {
-      setLoading(true);
-      setError(null);
-
-      const provider = new ethers.BrowserProvider(walletClient.transport);
-      const contracts = getContracts(provider);
-
-      // Get the pair contract
-      const pair = await contracts.getPair(fromToken, toToken);
-      
-      // Get reserves and token0
-      const [reserve0, reserve1] = await Promise.all([
-        pair.reserve0(),
-        pair.reserve1()
-      ]);
-      const token0 = await pair.token0();
-      
-      // Calculate amounts
-      const amountIn = ethers.parseEther(amount);
-      const amountOut = getAmountOut(
-        amountIn,
-        fromToken === token0 ? reserve0 : reserve1,
-        fromToken === token0 ? reserve1 : reserve0
-      );
-
-      // Approve token spending
-      const tokenContract = contracts.getToken(fromToken);
-      const approveTx = await tokenContract.approve(pair.target, amountIn);
+      await ensureWalletConnected(); // 👈 THIS LINE will ensure accounts are connected
+  
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const { dex, tokenA } = getContracts(provider);
+      const signer = await provider.getSigner();
+  
+      const approveTx = await tokenA.connect(signer).approve(dex.target as string, amountIn);
       await approveTx.wait();
-
-      // Execute swap
-      const swapTx = await pair.swap(fromToken, amountIn);
+  
+      const swapTx = await dex.connect(signer).swapAForB(amountIn);
       await swapTx.wait();
-
-      return swapTx.hash;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Swap failed");
-      throw err;
+  
+    } catch (err: any) {
+      console.error("Swap failed:", err);
+      setError(err.message || "Swap failed");
     } finally {
       setLoading(false);
     }
   };
+  
 
-  return {
-    swap,
-    loading,
-    error,
-    isConnected
-  };
-} 
+  return { swap, loading, error };
+};

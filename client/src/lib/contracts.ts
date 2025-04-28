@@ -1,54 +1,51 @@
 import { ethers } from "ethers";
-import { Factory, LPToken, Pair } from "../../../contracts/typechain-types";
+import { SimpleDEX } from "../../../contracts/typechain-types/contracts/DEX.sol/SimpleDEX";
+import { LPToken } from "../../../contracts/typechain-types/contracts/Mytoken.sol/LPToken";
+import { MintableToken } from "../../../contracts/typechain-types/contracts/Mint.sol/MintableToken";
 
 // Contract ABIs
-const factoryABI = [
-  "function createPair(address tokenA, address tokenB) external returns (address pair)",
-  "function getPair(address tokenA, address tokenB) external view returns (address pair)"
-];
-
-const pairABI = [
-  "function addLiquidity(uint amount0, uint amount1) external",
-  "function swap(uint amount0Out, uint amount1Out, address to) external",
-  "function getReserves() external view returns (uint reserve0, uint reserve1)",
-  "function token0() external view returns (address)",
-  "function token1() external view returns (address)"
+const dexABI = [
+  "function swapAForB(uint256 amountAIn) external",
+  "function swapBForA(uint256 amountBIn) external",
+  "function addLiquidity(uint256 amountA, uint256 amountB) external",
+  "function getReserves() external view returns (uint256, uint256)",
+  "function tokenA() external view returns (address)",
+  "function tokenB() external view returns (address)",
+  "function lpToken() external view returns (address)"
 ];
 
 const tokenABI = [
-  "function approve(address spender, uint amount) external returns (bool)",
-  "function transfer(address to, uint amount) external returns (bool)",
-  "function transferFrom(address from, address to, uint amount) external returns (bool)",
-  "function balanceOf(address account) external view returns (uint)",
+  "function approve(address spender, uint256 amount) external returns (bool)",
+  "function transfer(address to, uint256 amount) external returns (bool)",
+  "function transferFrom(address from, address to, uint256 amount) external returns (bool)",
+  "function balanceOf(address account) external view returns (uint256)",
   "function decimals() external view returns (uint8)"
 ];
 
+const lpTokenABI = [
+  "function mint(address to, uint256 amount) public",
+  "function totalSupply() external view returns (uint256)",
+  "function balanceOf(address account) external view returns (uint256)"
+];
+
 // Contract addresses (replace with your deployed addresses)
-const FACTORY_ADDRESS = "0x6eeBb4Fd756E22C087cDa9B0dAD6c6308d341671";
-const TOKEN_A_ADDRESS = "0xBD8923A53d7f8C719A0E81AfF3a876595ACdb7C7";
-const TOKEN_B_ADDRESS = "0x42C960EaED9a6f6422DAf5077de1Cb0b8161aca7";
+const DEX_ADDRESS = "0x91020E58304c2dC3ef475b6a8a8b2341f2Bdf3f1"; // Your DEX contract address
+const TOKEN_A_ADDRESS = "0xc1A5281209598225d75Ca55a65C00Dbc866279CD"; // Your TokenA address
+const TOKEN_B_ADDRESS = "0xD03f8203F0ceCd1eF4207dAEb8f9Ff879acc3CD1"; // Your TokenB address
+const LP_TOKEN_ADDRESS = "0xe1fe381f895f64cF8186f23EF12b6CF07E70a163"; // Your LP Token address
+
 
 export const getContracts = (provider: ethers.BrowserProvider) => {
-  const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider) as unknown as Factory;
-  
-  const getPair = async (tokenA: string, tokenB: string) => {
-    const pairAddress = await factory.getPair(tokenA, tokenB);
-    if (pairAddress === ethers.ZeroAddress) {
-      throw new Error("Pair does not exist");
-    }
-    return new ethers.Contract(pairAddress, pairABI, provider) as unknown as Pair;
-  };
-
-  const getToken = (address: string) => {
-    return new ethers.Contract(address, tokenABI, provider) as unknown as LPToken;
-  };
+  const dex = new ethers.Contract(DEX_ADDRESS, dexABI, provider) as unknown as SimpleDEX;
+  const tokenA = new ethers.Contract(TOKEN_A_ADDRESS, tokenABI, provider) as unknown as MintableToken;
+  const tokenB = new ethers.Contract(TOKEN_B_ADDRESS, tokenABI, provider) as unknown as MintableToken;
+  const lpToken = new ethers.Contract(LP_TOKEN_ADDRESS, lpTokenABI, provider) as unknown as LPToken;
 
   return {
-    factory,
-    getPair,
-    getToken,
-    tokenA: getToken(TOKEN_A_ADDRESS),
-    tokenB: getToken(TOKEN_B_ADDRESS)
+    dex,
+    tokenA,
+    tokenB,
+    lpToken
   };
 };
 
@@ -64,4 +61,4 @@ export const getAmountIn = (amountOut: bigint, reserveIn: bigint, reserveOut: bi
   const numerator = reserveIn * amountOut * BigInt(1000);
   const denominator = (reserveOut - amountOut) * BigInt(997);
   return (numerator / denominator) + BigInt(1);
-}; 
+};

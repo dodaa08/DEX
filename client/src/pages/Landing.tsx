@@ -2,6 +2,8 @@ import SwapCard from "../components/Landing/SwapCard";
 import MintToken from "./Mint";
 import Header from "../components/Landing/Header";
 import { useState } from "react";
+import AddLiquidity from "../components/Liquidity/AddLiquidity";
+
 
 const Landing = () => {
   const [showTrade, setshowtrade] = useState(true);
@@ -32,7 +34,7 @@ const Landing = () => {
         </div>
         
         {showTrade && (
-          <div className="py-10">
+          <div className="py-20">
             <SwapCard />
           </div>
         )}
@@ -45,7 +47,7 @@ const Landing = () => {
 
         {showPool && (
           <div>
-            {/* Pool content will go here */}
+            <AddLiquidity />
           </div>
         )}
       </div>
