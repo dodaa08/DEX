@@ -9,7 +9,7 @@ export const useSwap = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const swap = async (amountIn: string, amountOut: string) => {
+  const swap = async (amountIn: string) => {
     if (!walletClient || !address) {
       setError("Wallet not connected");
       return;

@@ -34,7 +34,7 @@ const cryptoIcons = [
   }
 ];
 
-const Header: FC<HeaderC> = ({ onShowTrade, onShowMint, onShowPool }) => {
+const Header: FC<HeaderC> = ({ onShowTrade, onShowPool }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuItems = [
