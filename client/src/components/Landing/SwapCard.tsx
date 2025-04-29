@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import { motion } from "framer-motion";
 
-
-
 export const SwapCard = () => {
   const { isConnected, address } = useAccount();
   const [amountIn, setAmountIn] = useState("");
