@@ -1,57 +1,25 @@
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { motion } from "framer-motion";
-import { useSwap } from "../../hooks/useSwap";
-import { parseUnits } from "ethers";
-// import { NightlyConnect } from "@nightlylabs/nightly-connect-sdk";
-
-// // TODO: Install @nightlylabs/nightly-connect-sdk package
-// // import { NightlyConnect } from "@nightlylabs/nightly-connect-sdk";
-
-// const nightly = new NightlyConnect({
-//   appMetadata: {
-//     name: "YourAppName",
-//     description: "Swap tokens",
-//     icon: "your-icon-url",
-//   },
-// });
-
-// // Somewhere before calling swap:
-// await nightly.init(); // 👈 Must call this once
-// await nightly.connect(); // 👈 Then connect
 
 
 
 export const SwapCard = () => {
   const { isConnected, address } = useAccount();
-  const { swap, loading, error } = useSwap();
   const [amountIn, setAmountIn] = useState("");
   const [amountOut, setAmountOut] = useState("");
-  const handleSwap = async () => {
-    if (!amountIn || !amountOut || !address) return;
-  
-    try {
-      // Initialize and connect Nightly if not already connected
-      // if (!nightly.isConnected()) {
-      //   await nightly.init();
-      //   await nightly.connect();
-      // }
-  
-      await swap(
-        parseUnits(amountIn, 18).toString(),
-        parseUnits(amountOut, 18).toString(),
-        address
-      );
-  
-      if (!error) {
-        setAmountIn("");
-        setAmountOut("");
-      }
-    } catch (err) {
-      console.error("Swap failed:", err);
-    }
+  const [loading, setLoading] = useState(false);
+
+
+  const handleSwap = () => {
+    setLoading(true);
+    // Static swap logic will be added later
+    setTimeout(() => {
+      setLoading(false);
+      setAmountIn("");
+      setAmountOut("");
+    }, 2000);
   };
-  
 
   return (
     <motion.div 
@@ -124,16 +92,6 @@ export const SwapCard = () => {
               </div>
             </div>
           </div>
-
-          {error && (
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-400 text-sm"
-            >
-              {error}
-            </motion.div>
-          )}
 
           <motion.button
             whileHover={{ scale: 1.02 }}

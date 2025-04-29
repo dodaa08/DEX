@@ -1,38 +1,40 @@
 import { ethers } from "hardhat";
 
-
 async function main() {
   console.log("🚀 Starting deployment to Sepolia...");
   const [deployer] = await ethers.getSigners();
   const userAddress = deployer.address;
 
   try {
-    // Deploy Token A
-    const MyToken = await ethers.getContractFactory("LPToken");
-    const tokenA = await MyToken.deploy();
+    // 1. Deploy TokenA
+    const MintableToken = await ethers.getContractFactory("MintableToken");
+    const tokenA = await MintableToken.deploy("TokenA", "TKA");
     await tokenA.waitForDeployment();
     await tokenA.mint(userAddress, ethers.parseUnits("1000", 18));
-    console.log("💰 Minted 1000 TokenA"); 
     console.log(`✅ TokenA deployed at: ${tokenA.target}`);
 
-    // Deploy Token B
-    const tokenB = await MyToken.deploy();
+    // 2. Deploy TokenB
+    const tokenB = await MintableToken.deploy("TokenB", "TKB");
     await tokenB.waitForDeployment();
-    console.log(`✅ TokenB deployed at: ${tokenB.target}`);
     await tokenB.mint(userAddress, ethers.parseUnits("1000", 18));
-    console.log("💰 Minted 1000 TokenB");
+    console.log(`✅ TokenB deployed at: ${tokenB.target}`);
 
-    // Deploy Factory
-    const Factory = await ethers.getContractFactory("Factory");
-    const factory = await Factory.deploy();
-    await factory.waitForDeployment();
-    console.log(`🏭 Factory deployed at: ${factory.target}`);
+    // 3. Deploy LPToken (for liquidity rewards)
+    const LPToken = await ethers.getContractFactory("LPToken");
+    const lpToken = await LPToken.deploy();
+    await lpToken.waitForDeployment();
+    console.log(`✅ LPToken deployed at: ${lpToken.target}`);
 
-    // Create a Pair
-    const createTx = await factory.createPair(tokenA.target, tokenB.target);
-    await createTx.wait();
-    const pairAddress = await factory.getPair(tokenA.target, tokenB.target);
-    console.log(`🔁 Pair created at: ${pairAddress}`);
+    // 4. Deploy SimpleDEX
+    const SimpleDEX = await ethers.getContractFactory("SimpleDEX");
+    const simpleDex = await SimpleDEX.deploy(tokenA.target, tokenB.target, lpToken.target);
+    await simpleDex.waitForDeployment();
+    console.log(`✅ SimpleDEX deployed at: ${simpleDex.target}`);
+
+    // 5. Transfer LPToken ownership to DEX
+    const tx = await lpToken.transferOwnership(simpleDex.target);
+    await tx.wait();
+    console.log(`✅ Ownership of LPToken transferred to SimpleDEX`);
 
     console.log("✨ Deployment completed successfully!");
   } catch (error) {
@@ -40,7 +42,6 @@ async function main() {
     throw error;
   }
 }
-
 
 main().catch((error) => {
   console.error("❌ Deployment failed:", error);
