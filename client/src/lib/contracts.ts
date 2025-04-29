@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
-import { SimpleDEX } from "../../../contracts/typechain-types/contracts/DEX.sol/SimpleDEX";
-import { LPToken } from "../../../contracts/typechain-types/contracts/Mytoken.sol/LPToken";
-import { MintableToken } from "../../../contracts/typechain-types/contracts/Mint.sol/MintableToken";
+import { SimpleDEX } from "../../../contracts/typechain-types/contracts/DEX.sol";
+import { LPToken } from "../../../contracts/typechain-types/contracts/Mytoken.sol";
+import { MintableToken } from "../../../contracts/typechain-types/contracts/Mint.sol";
 
 // Contract ABIs
 const dexABI = [

@@ -330,7 +330,7 @@ const AddLiquidity = ()=>{
 
   return (
     <>
-      <div className="flex flex-col items-center gap-6 py-20">
+      <div className="flex flex-col items-center gap-6 py-10">
         {!open && pools.map((pool) => (
           <motion.button 
             key={pool.id}
